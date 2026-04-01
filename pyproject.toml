@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcservers"
+version = "1.0.0"
+description = "Simple servers.dat reader"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "GPL-3.0-or-later"
+classifiers = [
+    "Programming Language :: Python :: 3"
+]
+authors = [
+    {name = "andrey4ik21pro1"}
+]
+dependencies = [
+    "nbt",
+    "rich"
+]
+
+[project.urls]
+Homepage = "https://github.com/andrey4ik21pro1/mcservers"
+Repository = "https://github.com/andrey4ik21pro1/mcservers"
+Issues = "https://github.com/andrey4ik21pro1/mcservers/issues"
+
+[project.scripts]
+mcservers = "mcservers.__main__:main"
