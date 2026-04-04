@@ -1,38 +1,14 @@
-from nbt.nbt import NBTFile
 import argparse
 from pathlib import Path
-from rich import print
-from rich.table import Table
-from .utils import get_servers_path
 
-def list_servers(path): # https://github.com/twoolie/NBT/issues/80
-    with open(path, "rb") as f:
-        nbtfile = NBTFile(buffer=f)
-        servers = nbtfile["servers"]
-
-        table = Table()
-
-        table.add_column("#", style="dim")
-        table.add_column("Name", style="cyan", no_wrap=True)
-        table.add_column("IP Address", style="magenta")
-        table.add_column("Icon", style="yellow")
-        table.add_column("Textures", style="yellow")
-
-        for i, server in enumerate(servers, start=1): # https://minecraft.fandom.com/wiki/Servers.dat_format
-            table.add_row(
-                str(i),
-                str(server["name"]),
-                str(server["ip"]),
-                "Yes" if server.get("icon") else "No",
-                "Yes" if server.get("acceptTextures") else "No"
-            )
-
-        print(table)
+from .utils import get_servers_path, get_export_path, get_timestamp
+from .table import Editor
+from .nbt import NBT
 
 def main():
     parser = argparse.ArgumentParser(
         prog="mcservers",
-        description="Simple servers.dat reader"
+        description="Simple servers.dat editor"
     )
 
     parser.add_argument(
@@ -41,10 +17,38 @@ def main():
         help="Specify the servers.dat path"
     )
 
+    parser.add_argument(
+        "--export",
+        nargs="?",
+        const=str(get_export_path()),
+        help="Specify the export text file"
+    )
+
     args = parser.parse_args()
     path = Path(args.path).resolve()
 
-    list_servers(path)
+    if path.is_dir():
+        path = path / "servers.dat"
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    nbt = NBT(path)
+    nbt.load()
+
+    if args.export is not None:
+        export_path = Path(args.export).resolve()
+        export_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if export_path.is_dir():
+            timestamp = get_timestamp()
+            export_path = export_path / f"servers_{timestamp}.txt"
+
+        nbt.export(export_path)
+        print(f"Exported to {export_path}")
+        return
+
+    app = Editor(nbt)
+    app.run()
 
 if __name__ == "__main__":
     main()

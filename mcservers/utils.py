@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 import sys
 
@@ -18,3 +19,10 @@ def get_minecraft_path():
 
 def get_servers_path():
     return get_minecraft_path() / "servers.dat"
+
+def get_timestamp():
+    return datetime.now().strftime("%Y-%m-%d_%H-%M")
+
+def get_export_path():
+    timestamp = get_timestamp()
+    return Path.cwd() / f"servers_{timestamp}.txt"

@@ -21,4 +21,9 @@ jobs:
       - name: Run
         shell: bash
         run: |
-          mcservers
+          mcservers --path ./data/servers.dat --export
+
+      - name: Verify
+        shell: bash
+        run: |
+          cat ./servers_*.txt
