@@ -32,7 +32,7 @@ mcservers --export <export>
 ## Usage
 1. **Install package:**
 ```bash
-pip install git+https://github.com/andrey4ik21pro1/mcservers.git
+pip install mcservers
 ```
 2. **Run**:
 ```bash
