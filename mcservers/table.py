@@ -7,23 +7,23 @@ COLUMNS = [
     ("Name", "string"),
     ("IP Address", "string"),
     ("Icon", "icon"),
-    ("Textures", "tristate"),
+    ("Textures", "tristate")
 ]
 
 TEXTURE_STATES = [None, 1, 0]
 TEXTURE_LABELS = {None: "?", 1: "✓", 0: "✗"}
 
 class Editor(App):
-
     BINDINGS = [
         Binding("a", "add_row", "Add row"),
         Binding("d", "delete_row", "Del row"),
         Binding("escape", "cancel", "Cancel", show=False),
-        Binding("q", "quit", "Quit"),
+        Binding("q", "quit", "Quit")
     ]
 
     def __init__(self, nbt):
         super().__init__()
+
         self.nbt = nbt
         self.data = [row[:] for row in nbt.rows]
         self._initial_data = [row[:] for row in nbt.rows]

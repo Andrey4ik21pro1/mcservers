@@ -1,3 +1,5 @@
+import configparser
+
 import nbtlib
 from nbtlib.tag import List, Compound, String, Byte
 
@@ -19,10 +21,10 @@ class NBT:
     def rows(self):
         return [
             [
-                str(server.get("name", "")),
-                str(server.get("ip", "")),
-                str(server.get("icon") or ""),
-                int(server["acceptTextures"]) if "acceptTextures" in server else None
+                server.get("name", ""),
+                server.get("ip", ""),
+                server.get("icon", "") or "",
+                server["acceptTextures"] if "acceptTextures" in server else None
             ]
             for server in self.servers
         ]
@@ -58,17 +60,24 @@ class NBT:
         if not self.servers:
             raise ValueError("Empty servers list")
 
+        config = configparser.ConfigParser()
+        config.optionxform = str
+
+        for i, row in enumerate(self.rows, start=1):
+            name, ip, icon, textures = row
+
+            section_name = f"server_{i}"
+
+            config[section_name] = {
+                "name": str(name),
+                "ip": str(ip)
+            }
+
+            if icon:
+                config[section_name]["icon"] = str(icon)
+
+            if textures in (0, 1):
+                config[section_name]["acceptTextures"] = str(int(textures))
+
         with open(export_path, "w", encoding="utf-8") as f:
-            for row in self.rows:
-                name, ip, icon, textures = row
-
-                f.write(f"name = {name}\n")
-                f.write(f"ip = {ip}\n")
-
-                if icon:
-                    f.write(f"icon = {icon}\n")
-
-                if textures in (0, 1):
-                    f.write(f"acceptTextures = {textures}\n")
-
-                f.write("\n")
+            config.write(f)
