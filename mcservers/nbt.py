@@ -32,9 +32,9 @@ class NBT:
     def save(self, rows):
         new_servers_list = List[Compound]() # https://minecraft.fandom.com/wiki/Servers.dat_format
 
-        for row in rows:
-            name = str(row[0] or "").strip()
-            ip = str(row[1] or "").strip()
+        for name, ip, icon, textures in rows:
+            name = str(name or "").strip()
+            ip = str(ip or "").strip()
 
             if not name and not ip:
                 continue
@@ -44,12 +44,13 @@ class NBT:
                 "ip": String(ip)
             })
 
-            icon = str(row[2] or "").strip()
+            icon = str(icon or "").strip()
+
             if icon:
                 server["icon"] = String(icon)
 
-            if row[3] in (0, 1):
-                server["acceptTextures"] = Byte(int(row[3]))
+            if textures in (0, 1):
+                server["acceptTextures"] = Byte(textures)
 
             new_servers_list.append(server)
 
@@ -63,9 +64,7 @@ class NBT:
         config = configparser.ConfigParser()
         config.optionxform = str
 
-        for i, row in enumerate(self.rows, start=1):
-            name, ip, icon, textures = row
-
+        for i, (name, ip, icon, textures) in enumerate(self.rows, start=1):
             section_name = f"server_{i}"
 
             config[section_name] = {
